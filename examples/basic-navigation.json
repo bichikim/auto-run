@@ -1,0 +1,30 @@
+{
+  "name": "Basic Navigation Example",
+  "description": "Simple example showing basic navigation and interaction",
+  "steps": [
+    {
+      "type": "navigate",
+      "url": "https://example.com",
+      "description": "Navigate to example.com"
+    },
+    {
+      "type": "wait",
+      "selector": "h1",
+      "timeout": 5000,
+      "description": "Wait for the main heading to appear"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take a screenshot of the page"
+    },
+    {
+      "type": "click",
+      "selector": "a[href*='more-information']",
+      "description": "Click on 'More information' link if available"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take a screenshot after clicking"
+    }
+  ]
+} 

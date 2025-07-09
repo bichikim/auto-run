@@ -1,0 +1,23 @@
+{
+  "browser": {
+    "type": "chromium",
+    "headless": false,
+    "viewport": {
+      "width": 1920,
+      "height": 1080
+    },
+    "slowMo": 500,
+    "timeout": 30000
+  },
+  "actions": {
+    "waitBetweenActions": 1500,
+    "retryAttempts": 3,
+    "screenshotOnError": true
+  },
+  "logging": {
+    "level": "info",
+    "outputDir": "./logs",
+    "saveScreenshots": true,
+    "verbose": true
+  }
+} 

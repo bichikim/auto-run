@@ -1,0 +1,25 @@
+{
+  "name": "",
+  "description": "Invalid script for testing validation",
+  "steps": [
+    {
+      "type": "navigate"
+    },
+    {
+      "type": "click",
+      "selector": ""
+    },
+    {
+      "type": "type",
+      "selector": "input[name='test']"
+    },
+    {
+      "type": "wait",
+      "timeout": -1000
+    },
+    {
+      "type": "invalid-action",
+      "selector": "button"
+    }
+  ]
+}

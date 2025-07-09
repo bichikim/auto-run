@@ -1,0 +1,64 @@
+{
+  "name": "Data Extraction Example",
+  "description": "Example showing how to extract data from web pages",
+  "steps": [
+    {
+      "type": "navigate",
+      "url": "https://quotes.toscrape.com/",
+      "description": "Navigate to quotes website"
+    },
+    {
+      "type": "wait",
+      "selector": ".quote",
+      "timeout": 5000,
+      "description": "Wait for quotes to load"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take screenshot of the page"
+    },
+    {
+      "type": "extract",
+      "selector": ".quote .text",
+      "attribute": "text",
+      "variable": "quotes",
+      "description": "Extract all quote texts"
+    },
+    {
+      "type": "extract",
+      "selector": ".quote .author",
+      "attribute": "text",
+      "variable": "authors",
+      "description": "Extract all author names"
+    },
+    {
+      "type": "extract",
+      "selector": ".quote .tags a",
+      "attribute": "text",
+      "variable": "tags",
+      "description": "Extract all tags"
+    },
+    {
+      "type": "click",
+      "selector": ".next a",
+      "description": "Click next page button"
+    },
+    {
+      "type": "wait",
+      "selector": ".quote",
+      "timeout": 5000,
+      "description": "Wait for next page to load"
+    },
+    {
+      "type": "extract",
+      "selector": ".quote .text",
+      "attribute": "text",
+      "variable": "quotes_page2",
+      "description": "Extract quotes from second page"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take screenshot of second page"
+    }
+  ]
+} 

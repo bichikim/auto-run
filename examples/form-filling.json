@@ -1,0 +1,76 @@
+{
+  "name": "Form Filling Example",
+  "description": "Example showing how to fill out and submit a form",
+  "steps": [
+    {
+      "type": "navigate",
+      "url": "https://httpbin.org/forms/post",
+      "description": "Navigate to a test form page"
+    },
+    {
+      "type": "wait",
+      "selector": "form",
+      "timeout": 5000,
+      "description": "Wait for form to load"
+    },
+    {
+      "type": "type",
+      "selector": "input[name='custname']",
+      "value": "John Doe",
+      "description": "Enter customer name"
+    },
+    {
+      "type": "type",
+      "selector": "input[name='custtel']",
+      "value": "123-456-7890",
+      "description": "Enter customer telephone"
+    },
+    {
+      "type": "type",
+      "selector": "input[name='custemail']",
+      "value": "john.doe@example.com",
+      "description": "Enter customer email"
+    },
+    {
+      "type": "select",
+      "selector": "select[name='size']",
+      "value": "medium",
+      "description": "Select pizza size"
+    },
+    {
+      "type": "check",
+      "selector": "input[name='topping'][value='bacon']",
+      "description": "Select bacon topping"
+    },
+    {
+      "type": "check",
+      "selector": "input[name='topping'][value='cheese']",
+      "description": "Select cheese topping"
+    },
+    {
+      "type": "type",
+      "selector": "textarea[name='comments']",
+      "value": "Please deliver to the front door. Thank you!",
+      "description": "Add delivery comments"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take screenshot before submitting"
+    },
+    {
+      "type": "click",
+      "selector": "input[type='submit']",
+      "description": "Submit the form"
+    },
+    {
+      "type": "wait",
+      "selector": "pre",
+      "timeout": 5000,
+      "description": "Wait for response to appear"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take screenshot of the result"
+    }
+  ]
+} 

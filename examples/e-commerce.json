@@ -1,0 +1,82 @@
+{
+  "name": "E-commerce Shopping Example",
+  "description": "Example showing automated shopping flow on an e-commerce site",
+  "steps": [
+    {
+      "type": "navigate",
+      "url": "https://demo.opencart.com/",
+      "description": "Navigate to OpenCart demo store"
+    },
+    {
+      "type": "wait",
+      "selector": ".navbar-nav",
+      "timeout": 5000,
+      "description": "Wait for navigation menu to load"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take screenshot of homepage"
+    },
+    {
+      "type": "hover",
+      "selector": "#narbar-menu > ul > li:first-child",
+      "description": "Hover over first menu item"
+    },
+    {
+      "type": "click",
+      "selector": "a[href*='laptop-notebook']",
+      "description": "Click on Laptop & Notebook category"
+    },
+    {
+      "type": "wait",
+      "selector": ".product-thumb",
+      "timeout": 5000,
+      "description": "Wait for products to load"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take screenshot of category page"
+    },
+    {
+      "type": "click",
+      "selector": ".product-thumb:first-child .btn-group button[title='Add to Cart']",
+      "description": "Add first product to cart"
+    },
+    {
+      "type": "wait",
+      "selector": ".alert-success",
+      "timeout": 3000,
+      "description": "Wait for success message"
+    },
+    {
+      "type": "click",
+      "selector": "#cart button",
+      "description": "Click on cart"
+    },
+    {
+      "type": "wait",
+      "selector": ".dropdown-menu-right",
+      "timeout": 2000,
+      "description": "Wait for cart dropdown"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take screenshot of cart contents"
+    },
+    {
+      "type": "click",
+      "selector": "a[href*='checkout/cart']",
+      "description": "Go to shopping cart"
+    },
+    {
+      "type": "wait",
+      "selector": "#content",
+      "timeout": 5000,
+      "description": "Wait for cart page to load"
+    },
+    {
+      "type": "screenshot",
+      "description": "Take final screenshot of cart page"
+    }
+  ]
+} 
