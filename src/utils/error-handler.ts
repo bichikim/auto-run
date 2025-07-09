@@ -55,8 +55,8 @@ const DEFAULT_RETRY_STRATEGIES: Record<ErrorType, RetryStrategy> = {
   },
   [ErrorType.TIMEOUT_ERROR]: {
     maxAttempts: 3,
-    delay: 3000,
-    backoff: 'linear',
+    delay: 1000,
+    backoff: 'fixed',
   },
   [ErrorType.ELEMENT_NOT_FOUND]: {
     maxAttempts: 4,
