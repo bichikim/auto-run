@@ -5,12 +5,11 @@
     {
       "type": "navigate",
       "url": "https://example.com",
-      "description": "Navigate to example.com"
+      "description": "Navigate to httpbin.org"
     },
     {
       "type": "wait",
       "selector": "h1",
-      "timeout": 5000,
       "description": "Wait for the main heading to appear"
     },
     {
@@ -19,8 +18,8 @@
     },
     {
       "type": "click",
-      "selector": "a[href*='more-information']",
-      "description": "Click on 'More information' link if available"
+      "selector": "a",
+      "description": "Click on any available link"
     },
     {
       "type": "screenshot",

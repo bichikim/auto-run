@@ -87,8 +87,10 @@ function validateStep(step: any, index: number): Result<ActionStep> {
     selector: step.selector || undefined,
     value: step.value || undefined,
     url: step.url || undefined,
-    timeout: step.timeout || undefined,
+    timeout: step.timeout || undefined, // 설정 파일에서 기본값 사용
     description: step.description || undefined,
+    frame: step.frame || undefined,
+    optional: step.optional || undefined,
   })
 }
 
@@ -119,8 +121,9 @@ function validateStepRequirements(step: any, stepNumber: number): Result<void> {
       break
 
     case 'wait':
-      if (!step.timeout || typeof step.timeout !== 'number' || step.timeout <= 0) {
-        return failure(`Step ${stepNumber}: wait action requires positive 'timeout' field`)
+      // Wait action can use default timeout from config, so timeout is optional
+      if (step.timeout !== undefined && (typeof step.timeout !== 'number' || step.timeout <= 0)) {
+        return failure(`Step ${stepNumber}: wait action timeout must be a positive number if provided`)
       }
       break
 

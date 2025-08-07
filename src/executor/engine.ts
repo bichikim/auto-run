@@ -15,6 +15,7 @@ import {
   getErrorSummary,
 } from '../utils/error-handler.js'
 import {createLogger, Logger, formatExecutionSummary} from '../utils/logger.js'
+import {replaceVariables} from '../utils/variable-replacer.js'
 
 export interface ExecutionResult {
   success: boolean
@@ -145,16 +146,28 @@ export async function executeScript(
     // Execute steps sequentially
     let stepsExecuted = 0
     for (let i = 0; i < script.steps.length; i++) {
-      const step = script.steps[i]
+      const step = {...script.steps[i]};
+      if (typeof step.value === 'string') {
+        step.value = replaceVariables(step.value);
+      }
+      if ('url' in step && typeof step.url === 'string') {
+        step.url = replaceVariables(step.url);
+      }
+      // Set default timeout from config if not specified
+      if (!step.timeout) {
+        step.timeout = config.browser.timeout;
+      }
       const stepNumber = i + 1
       const stepStartTime = Date.now()
 
       // Log step start
       const stepSummary = getStepSummary(step)
-      logger.info(`Starting step ${stepNumber}`, {
+      const description = step.description ? ` - ${step.description}` : ''
+      logger.info(`Starting step ${stepNumber}${description}`, {
         stepNumber,
         action: step.type,
         summary: stepSummary,
+        description: step.description,
       }, stepNumber)
 
       try {

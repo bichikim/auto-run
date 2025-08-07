@@ -135,11 +135,63 @@ export async function clickElement(
   page: Page,
   selector: string,
   timeout?: number,
+  frameSelector?: string,
 ): Promise<Result<void>> {
   try {
+    if (frameSelector) {
+      // Click element inside iframe
+      await page.frameLocator(frameSelector).locator(selector).click({
+        timeout: timeout || 30000,
+      })
+    } else {
+      // First check if element exists for faster failure
+      const existsResult = await elementExists(page, selector)
+      if (!existsResult.success) {
+        return failure(`Failed to check if element exists: ${existsResult.error}`)
+      }
+      
+      if (!existsResult.data) {
+        return failure(`Element not found: ${selector}`)
+      }
+      
+      // Element exists, proceed with click
+      await page.click(selector, {
+        timeout: timeout || 30000,
+      })
+    }
+    return success(undefined)
+  } catch (error) {
+    return failure(`Failed to click element ${selector}: ${error}`)
+  }
+}
+
+/**
+ * Click element by selector with optional existence check
+ */
+export async function clickElementIfExists(
+  page: Page,
+  selector: string,
+  timeout?: number,
+  logger?: Logger,
+): Promise<Result<void>> {
+  try {
+    // First check if element exists
+    const existsResult = await elementExists(page, selector)
+    if (!existsResult.success) {
+      return failure(`Failed to check if element exists: ${existsResult.error}`)
+    }
+    
+    if (!existsResult.data) {
+      logger?.warn(`Element not found: ${selector}`, {selector})
+      return success(undefined) // Return success but skip the click
+    }
+    
+    // Element exists, proceed with click
     await page.click(selector, {
       timeout: timeout || 30000,
     })
+    
+    logger?.info(`Successfully clicked element: ${selector}`)
     return success(undefined)
   } catch (error) {
     return failure(`Failed to click element ${selector}: ${error}`)
@@ -154,11 +206,19 @@ export async function typeText(
   selector: string,
   text: string,
   timeout?: number,
+  frameSelector?: string,
 ): Promise<Result<void>> {
   try {
-    await page.fill(selector, text, {
-      timeout: timeout || 30000,
-    })
+    if (frameSelector) {
+      // Type text inside iframe
+      await page.frameLocator(frameSelector).locator(selector).fill(text, {
+        timeout: timeout || 30000,
+      })
+    } else {
+      await page.fill(selector, text, {
+        timeout: timeout || 30000,
+      })
+    }
     return success(undefined)
   } catch (error) {
     return failure(`Failed to type text into ${selector}: ${error}`)
@@ -251,11 +311,19 @@ export async function selectOption(
   selector: string,
   value: string | number,
   timeout?: number,
+  frameSelector?: string,
 ): Promise<Result<void>> {
   try {
-    await page.selectOption(selector, String(value), {
-      timeout: timeout || 30000,
-    })
+    if (frameSelector) {
+      // Select option inside iframe
+      await page.frameLocator(frameSelector).locator(selector).selectOption(String(value), {
+        timeout: timeout || 30000,
+      })
+    } else {
+      await page.selectOption(selector, String(value), {
+        timeout: timeout || 30000,
+      })
+    }
     return success(undefined)
   } catch (error) {
     return failure(`Failed to select option ${value} from ${selector}: ${error}`)
@@ -269,12 +337,21 @@ export async function waitForElement(
   page: Page,
   selector: string,
   timeout?: number,
+  frameSelector?: string,
 ): Promise<Result<void>> {
   try {
-    await page.waitForSelector(selector, {
-      state: 'visible',
-      timeout: timeout || 30000,
-    })
+    if (frameSelector) {
+      // Wait for element inside iframe
+      await page.frameLocator(frameSelector).locator(selector).waitFor({
+        state: 'attached',
+        timeout: timeout || 30000,
+      })
+    } else {
+      await page.waitForSelector(selector, {
+        state: 'attached',  // 'visible' 대신 'attached' 사용
+        timeout: timeout || 30000,
+      })
+    }
     return success(undefined)
   } catch (error) {
     return failure(`Failed to wait for element ${selector}: ${error}`)
@@ -302,6 +379,40 @@ export async function getElementText(page: Page, selector: string): Promise<Resu
     return success(text || '')
   } catch (error) {
     return failure(`Failed to get text from element ${selector}: ${error}`)
+  }
+}
+
+/**
+ * Handle browser alert/dialog
+ */
+export async function handleAlert(
+  page: Page,
+  action: 'accept' | 'dismiss',
+  promptText?: string,
+  logger?: Logger,
+): Promise<Result<void>> {
+  try {
+    // Set up dialog handler before the action that triggers the alert
+    page.on('dialog', async (dialog) => {
+      logger?.info(`Dialog detected: ${dialog.type()} - ${dialog.message()}`)
+      
+      switch (action) {
+        case 'accept':
+          if (dialog.type() === 'prompt' && promptText) {
+            await dialog.accept(promptText)
+          } else {
+            await dialog.accept()
+          }
+          break
+        case 'dismiss':
+          await dialog.dismiss()
+          break
+      }
+    })
+    
+    return success(undefined)
+  } catch (error) {
+    return failure(`Failed to handle alert: ${error}`)
   }
 }
 
@@ -339,18 +450,28 @@ export async function executeActionStep(
         if (!step.selector) {
           return failure('Click action requires selector')
         }
-        const result = await clickElement(page, step.selector, step.timeout || config.browser.timeout)
-        if (!result.success) {
-          return result
+        
+        // Check if this is a conditional click (when optional flag is set)
+        if (step.optional) {
+          const result = await clickElementIfExists(page, step.selector, step.timeout || config.browser.timeout, logger)
+          if (!result.success) {
+            return result
+          }
+          return success(undefined)
+        } else {
+          const result = await clickElement(page, step.selector, step.timeout || config.browser.timeout, step.frame)
+          if (!result.success) {
+            return result
+          }
+          return success(undefined)
         }
-        return success(undefined)
       }
 
       case 'type': {
         if (!step.selector || step.value === undefined) {
           return failure('Type action requires selector and value')
         }
-        const result = await typeText(page, step.selector, String(step.value), step.timeout || config.browser.timeout)
+        const result = await typeText(page, step.selector, String(step.value), step.timeout || config.browser.timeout, step.frame)
         if (!result.success) {
           return result
         }
@@ -358,14 +479,23 @@ export async function executeActionStep(
       }
 
       case 'wait': {
-        if (!step.timeout) {
-          return failure('Wait action requires timeout')
+        if (step.selector) {
+          // Wait for element to appear
+          const result = await waitForElement(page, step.selector, step.timeout || config.browser.timeout, step.frame)
+          if (!result.success) {
+            return result
+          }
+          return success(undefined)
+        } else if (step.timeout) {
+          // Wait for specified time
+          const result = await waitForTime(step.timeout)
+          if (!result.success) {
+            return result
+          }
+          return success(undefined)
+        } else {
+          return failure('Wait action requires either selector or timeout')
         }
-        const result = await waitForTime(step.timeout)
-        if (!result.success) {
-          return result
-        }
-        return success(undefined)
       }
 
       case 'screenshot': {
@@ -392,7 +522,16 @@ export async function executeActionStep(
         if (!step.selector || step.value === undefined) {
           return failure('Select action requires selector and value')
         }
-        const result = await selectOption(page, step.selector, step.value, step.timeout || config.browser.timeout)
+        const result = await selectOption(page, step.selector, step.value, step.timeout || config.browser.timeout, step.frame)
+        if (!result.success) {
+          return result
+        }
+        return success(undefined)
+      }
+
+      case 'alert': {
+        const action = step.value === 'accept' || step.value === 'dismiss' ? step.value : 'accept'
+        const result = await handleAlert(page, action, step.promptText, logger)
         if (!result.success) {
           return result
         }

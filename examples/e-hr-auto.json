@@ -1,0 +1,67 @@
+{
+  "name": "e-hr-auto",
+  "description": "auto check",
+  "steps": [
+    {
+      "type": "navigate",
+      "url": "https://e-hr.wavve.com/",
+      "timeout": 3000,
+      "description": "navigate to e-hr site"
+    },
+    {
+      "type": "type",
+      "selector": "#S_USER_ID",
+      "value": "CWC1000280",
+      "description": "type user id"
+    },
+    {
+      "type": "type",
+      "selector": "#S_PWD",
+      "value": "${.env>E_HR_PASSWORD}",
+      "description": "type password"
+    },
+    {
+      "type": "click",
+      "selector": "#btn_login",
+      "description": "click login button"
+    },
+    {
+      "type": "wait",
+      "selector": "#mainbox",
+      "timeout": 3000,
+      "description": "wait for login"
+    },
+    {
+      "type": "click",
+      "selector": "a[module_id='essMe']",
+      "description": "click my info"
+    },
+    {
+      "type": "wait",
+      "selector": "span[menu_nm='출퇴근기록']",
+      "description": "wait for my info"
+    },
+    {
+      "type": "click",
+      "selector": "span[menu_nm='출퇴근기록']",
+      "description": "click my commuting"
+    },
+    {
+      "type": "wait",
+      "selector": "#f1",
+      "description": "wait for my commuting",
+      "timeout": 3000
+    },
+    {
+      "type": "click",
+      "selector": "#inOutBtn input[value='출근기록']",
+      "frame": "iframe[name='iframe_biz_essMeessme49']",
+      "description": "click my commuting",
+      "timeout": 3000
+    },
+    {
+      "type": "screenshot",
+      "description": "Take screenshot of the result"
+    }
+  ]
+}

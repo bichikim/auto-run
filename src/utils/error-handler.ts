@@ -54,13 +54,13 @@ const DEFAULT_RETRY_STRATEGIES: Record<ErrorType, RetryStrategy> = {
     backoff: 'exponential',
   },
   [ErrorType.TIMEOUT_ERROR]: {
-    maxAttempts: 3,
-    delay: 1000,
+    maxAttempts: 2,
+    delay: 500,
     backoff: 'fixed',
   },
   [ErrorType.ELEMENT_NOT_FOUND]: {
     maxAttempts: 4,
-    delay: 1500,
+    delay: 1000,
     backoff: 'fixed',
   },
   [ErrorType.ELEMENT_NOT_VISIBLE]: {

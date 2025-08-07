@@ -1,10 +1,13 @@
 export interface ActionStep {
-  type: 'navigate' | 'click' | 'type' | 'wait' | 'screenshot' | 'scroll' | 'select'
+  type: 'navigate' | 'click' | 'type' | 'wait' | 'screenshot' | 'scroll' | 'select' | 'alert'
   selector?: string
   value?: string | number
   url?: string
   timeout?: number
   description?: string
+  optional?: boolean
+  frame?: string  // iframe selector
+  promptText?: string  // for alert prompts
 }
 
 export interface AutomationScript {

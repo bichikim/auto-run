@@ -10,7 +10,7 @@ export default defineConfig({
       height: 1080,
     },
     slowMo: 0,
-    timeout: 30000,
+    timeout: 3000,
   },
 
   // Action configuration

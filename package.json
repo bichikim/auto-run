@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "type": "module",
   "bin": {
-    "auto": "./bin/command.js"
+    "auto-run": "./bin/command.js"
   },
   "scripts": {
     "build": "tsdown 'src/**/*.ts' '!src/**/*.spec.ts' '!src/**/*.test.ts' --out-dir dist",
@@ -30,6 +30,7 @@
   "dependencies": {
     "@playwright/test": "^1.53.2",
     "commander": "^14.0.0",
+    "dotenv": "^17.2.1",
     "playwright": "^1.53.2"
   },
   "devDependencies": {

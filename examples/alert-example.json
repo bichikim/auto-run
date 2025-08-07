@@ -1,0 +1,48 @@
+{
+  "name": "Alert Handling Example",
+  "description": "Demonstrates how to handle browser alerts and dialogs",
+  "baseUrl": "https://example.com",
+  "steps": [
+    {
+      "type": "navigate",
+      "url": "https://example.com",
+      "description": "Navigate to a page with alerts"
+    },
+    {
+      "type": "alert",
+      "value": "accept",
+      "description": "Accept any alert that appears"
+    },
+    {
+      "type": "click",
+      "selector": "button[onclick='alert(\"Hello World!\")']",
+      "description": "Click button that triggers an alert"
+    },
+    {
+      "type": "alert",
+      "value": "accept",
+      "description": "Accept the alert"
+    },
+    {
+      "type": "click",
+      "selector": "button[onclick='confirm(\"Are you sure?\")']",
+      "description": "Click button that triggers a confirm dialog"
+    },
+    {
+      "type": "alert",
+      "value": "accept",
+      "description": "Accept the confirm dialog"
+    },
+    {
+      "type": "click",
+      "selector": "button[onclick='prompt(\"Enter your name:\", \"\")']",
+      "description": "Click button that triggers a prompt"
+    },
+    {
+      "type": "alert",
+      "value": "accept",
+      "promptText": "John Doe",
+      "description": "Accept the prompt with text input"
+    }
+  ]
+}
