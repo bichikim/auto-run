@@ -12,6 +12,11 @@ A powerful, TypeScript-based web automation tool that allows you to automate bro
 - 📸 **Screenshot Capture**: Automatic screenshots on errors and manual captures
 - 🔄 **Retry Logic**: Smart retry mechanisms for flaky elements
 - 📊 **Detailed Reporting**: Execution summaries and performance metrics
+- 🎭 **Alert Handling**: Built-in support for browser alerts, confirms, and prompts
+- 🖼️ **Iframe Support**: Seamless interaction with iframe elements
+- 🔧 **Variable Substitution**: Environment variable support with `${env>VAR_NAME}` syntax
+- ✅ **Advanced Validation**: Comprehensive script validation with warnings
+- 🛠️ **Enhanced CLI**: Improved command-line interface with multiple commands
 
 ## Installation
 
@@ -46,6 +51,50 @@ npm run build
 
 ```bash
 node bin/command.js run my-script.json
+```
+
+## CLI Commands
+
+### Run Script
+```bash
+# Basic usage
+node bin/command.js run <script-file>
+
+# With custom configuration
+node bin/command.js run <script-file> --config <config-file>
+
+# With output file
+node bin/command.js run <script-file> --output results.json
+
+# With browser options
+node bin/command.js run <script-file> --browser firefox --no-headless
+```
+
+### Validate Script
+```bash
+# Validate without executing
+node bin/command.js validate <script-file>
+
+# With verbose output
+node bin/command.js validate <script-file> --verbose
+```
+
+### Create Example
+```bash
+# Create example script
+node bin/command.js example
+
+# Create with custom name
+node bin/command.js example my-script.json
+```
+
+### Show Configuration
+```bash
+# Show current configuration
+node bin/command.js config
+
+# Show with custom config file
+node bin/command.js config --config custom.config.mts
 ```
 
 ## Configuration
@@ -120,6 +169,7 @@ node bin/command.js run my-script.json
 - `scroll` - Scroll to element or position
 - `iframe` - Switch to iframe context
 - `newTab` - Open new browser tab
+- `alert` - Handle browser alerts, confirms, and prompts
 
 ## Action Examples
 
@@ -132,13 +182,13 @@ node bin/command.js run my-script.json
 }
 ```
 
-### Type Text
+### Type Text with Variable
 ```json
 {
   "type": "type",
   "selector": "input[name='email']",
-  "value": "user@example.com",
-  "description": "Enter email address"
+  "value": "${.env>EMAIL_ADDRESS}",
+  "description": "Enter email from environment variable"
 }
 ```
 
@@ -152,14 +202,23 @@ node bin/command.js run my-script.json
 }
 ```
 
-### Extract Data
+### Iframe Interaction
 ```json
 {
-  "type": "extract",
-  "selector": ".product-price",
-  "attribute": "text",
-  "variable": "prices",
-  "description": "Extract all product prices"
+  "type": "click",
+  "selector": "#submit-btn",
+  "frame": "iframe[name='main-frame']",
+  "description": "Click button inside iframe"
+}
+```
+
+### Alert Handling
+```json
+{
+  "type": "alert",
+  "value": "accept",
+  "promptText": "John Doe",
+  "description": "Accept alert with text input"
 }
 ```
 
@@ -173,6 +232,26 @@ node bin/command.js run my-script.json
 }
 ```
 
+## Variable Substitution
+
+The tool supports environment variable substitution using the `${env>VAR_NAME}` syntax:
+
+```json
+{
+  "type": "type",
+  "selector": "#password",
+  "value": "${.env>USER_PASSWORD}",
+  "description": "Type password from environment"
+}
+```
+
+### Environment File Support
+
+You can use different environment files:
+- `${env>VAR}` - Uses `.env` file
+- `${env.production>VAR}` - Uses `.env.production` file
+- `${env.staging>VAR}` - Uses `.env.staging` file
+
 ## Examples
 
 The `examples/` directory contains several complete automation scripts:
@@ -181,6 +260,8 @@ The `examples/` directory contains several complete automation scripts:
 - **form-filling.json** - Automated form completion
 - **data-extraction.json** - Web scraping example
 - **e-commerce.json** - Shopping cart automation
+- **alert-example.json** - Browser alert handling
+- **e-hr-auto.json** - Real-world automation with iframe and variables
 - **config.json** - Example configuration file
 
 ### Running Examples
@@ -194,6 +275,9 @@ node bin/command.js run examples/form-filling.json --config examples/config.json
 
 # Run in headless mode
 HEADLESS=true node bin/command.js run examples/data-extraction.json
+
+# Validate script before running
+node bin/command.js validate examples/e-hr-auto.json
 ```
 
 ## Environment Variables
@@ -221,21 +305,56 @@ SAVE_SCREENSHOTS=true
 VERBOSE=true
 ```
 
-## CLI Usage
+## Advanced Features
+
+### Alert Handling
+
+The tool can handle various browser dialogs:
+
+```json
+{
+  "type": "alert",
+  "value": "accept",        // "accept" or "dismiss"
+  "promptText": "John Doe", // Optional text for prompts
+  "description": "Handle alert dialog"
+}
+```
+
+### Iframe Support
+
+Interact with elements inside iframes:
+
+```json
+{
+  "type": "click",
+  "selector": "#button",
+  "frame": "iframe[name='content']",
+  "description": "Click button inside iframe"
+}
+```
+
+### Enhanced Validation
+
+Scripts are validated with comprehensive checks:
 
 ```bash
-# Basic usage
-node bin/command.js run <script-file>
-
-# With custom configuration
-node bin/command.js run <script-file> --config <config-file>
-
-# With output file
-node bin/command.js run <script-file> --output results.json
-
-# Show help
-node bin/command.js --help
+# Validate script
+node bin/command.js validate my-script.json
 ```
+
+Validation includes:
+- Syntax and structure validation
+- Selector format checking
+- URL validation
+- Performance warnings
+- Best practice suggestions
+
+### Smart Error Handling
+
+- **Automatic Retries**: Retry failed actions with exponential backoff
+- **Error Classification**: Categorize errors for better debugging
+- **Screenshot on Error**: Automatic screenshots when errors occur
+- **Graceful Degradation**: Continue execution when possible
 
 ## Logging and Debugging
 
